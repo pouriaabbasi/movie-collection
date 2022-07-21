@@ -1,20 +1,21 @@
-const userModel = require("../models/userModel");
+const User = require("../models/model/userModel");
+const userValidate = require("../models/validation/userValidation");
 const passwordUtil = require("../utils/passwordUtil");
 const typeUtil = require("../utils/typeUtil");
 
 const getAllUsers = async () => {
-    const users = await userModel.User.find().lean().select('-password');
+    const users = await User.find().lean().select('-password');
     return users;
 }
 
 const getUser = async (id) => {
     const objectId = typeUtil.castToObjectId(id);
-    const user = userModel.User.findById(objectId).lean().select("-password");
+    const user = User.findById(objectId).lean().select("-password");
     return user;
 }
 
 const addNewUser = async (model) => {
-    const error = await userModel.insertValidateUserModel(model);
+    const error = await userValidate.insertValidateUserModel(model);
     if (error) {
         throw new Error(error);
     }
@@ -27,7 +28,7 @@ const addNewUser = async (model) => {
 }
 
 const updateUser = async (id, model) => {
-    const error = await userModel.updateValidationUserModel(model);
+    const error = await userValidate.updateValidationUserModel(model);
     if (error) {
         throw new Error(error);
     }
@@ -35,17 +36,17 @@ const updateUser = async (id, model) => {
     const user = await createUserModelFromRequestBody(model);
 
     const objectId = typeUtil.castToObjectId(id);
-    return await userModel.User.findByIdAndUpdate(objectId, user, { returnOriginal: false }).select("-password");
+    return await User.findByIdAndUpdate(objectId, user, { returnOriginal: false }).select("-password");
 }
 
 const deleteUser = async (id) => {
     const objectId = typeUtil.castToObjectId(id);
-    await userModel.User.deleteOne({ _id: objectId });
+    await User.deleteOne({ _id: objectId });
     return true;
 }
 
 const createUserModelFromRequestBody = async (model) => {
-    return new userModel.User({
+    return new User({
         firstName: model.firstName,
         lastName: model.lastName,
         username: model.username,

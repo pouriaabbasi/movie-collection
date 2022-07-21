@@ -1,14 +1,15 @@
-const userModel = require("../models/userModel");
+const User = require("../models/model/userModel");
+const userValidate = require("../models/validation/userValidation");
 const passwordUtil = require("../utils/passwordUtil");
 const jwt = require('jsonwebtoken');
 
 const login = async (model) => {
-    const error = await userModel.validateLoginModel(model);
+    const error = await userValidate.validateLoginModel(model);
     if (error) {
         throw new Error(error);
     }
 
-    const user = await userModel.User.findOne({ username: model.username });
+    const user = await User.findOne({ username: model.username });
     if (!user) {
         throw new Error("Username or Password is not correct");
     }
