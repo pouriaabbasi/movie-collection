@@ -5,8 +5,11 @@ const verifyToken = (req, res, next) => {
     if (!token) {
         return res.status(401).send("Invalid Token");
     }
+    if (!token.startsWith('Bearer ')) {
+        return res.status(401).send("Invalid Token");
+    }
     try {
-        const decode = jwt.verify(token, "movie_collection_apis");
+        const decode = jwt.verify(token.replace('Bearer ', ''), "movie_collection_apis");
         req.user = decode;
     } catch (error) {
         return res.status(401).send("Invalid Token");
