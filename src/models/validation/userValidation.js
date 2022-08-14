@@ -26,6 +26,7 @@ const insertValidateUserModel = async (user) => {
 }
 
 const updateValidationUserModel = async (user) => {
+    
     const { error } = updateValidation.validate(user);
     if (error) {
         return error.message;

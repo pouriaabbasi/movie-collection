@@ -33,10 +33,9 @@ const updateUser = async (id, model) => {
         throw new Error(error);
     }
 
-    const user = await createUserModelFromRequestBody(model);
-
     const objectId = typeUtil.castToObjectId(id);
-    return await User.findByIdAndUpdate(objectId, user, { returnOriginal: false }).select("-password");
+
+    return await User.findByIdAndUpdate(objectId, model, { returnOriginal: false }).select("-password");
 }
 
 const deleteUser = async (id) => {
@@ -46,12 +45,17 @@ const deleteUser = async (id) => {
 }
 
 const createUserModelFromRequestBody = async (model) => {
-    return new User({
+    const userModel = new User({
         firstName: model.firstName,
         lastName: model.lastName,
-        username: model.username,
-        password: await passwordUtil.securePassword(model.password)
-    });
+        username: model.username
+    }); 
+
+    if(model.password){
+        userModel.password = await passwordUtil.securePassword(model.password)
+    }
+    // return new User(userModel);
+    return userModel;
 }
 
 module.exports = {
